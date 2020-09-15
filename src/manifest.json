@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "Announce Extention for ChatWork",
+    "short_name": "AncExt for CW",
+    "version": "0.0.0.1",
+    "description": "チャットワークで指定した文章を指定した時間に通知、送信する拡張機能です。",
+    "page_action": {
+        "default_title": "Announce Extention for ChatWork",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [ "https://www.chatwork.com/*" ],
+            "js": [ "JS.js" ]
+        }
+    ],
+    "background": { "scripts": ["background.js"] },
+    "permissions": [
+        "notifications",
+        "alarms"
+    ],
+    "options_page": "ChatWork.html"
+}
