@@ -13,8 +13,8 @@ const  DoStorage = {//seter geter
                         if (typeof value.chatwork === 'undefined') {
         
                         } else {
-                                console.log(value.chatwork);
-                        }//多分毎回全データが追加され、同じものがいっぱいある状態に。                
+                                console.log(value.chatwork);       
+                        }           
                 });
         }
         ,
@@ -27,6 +27,8 @@ const  DoStorage = {//seter geter
                                 value.chatwork = [chatlist];
                         } else {
                                 value.chatwork.push(chatlist);
+                                chrome.storage.local.clear();
+                                //chrome.StorageArea.remove('chatwork');//promiseを使用し、一通り処理出来たら消すようにしたい
                         }//多分毎回全データが追加され、同じものがいっぱいある状態に。
                         //同じものがあるかのヴァリデーションチェックが必要。
                         chrome.storage.local.set({ 'chatwork': value.chatwork }, function () { });
@@ -37,22 +39,19 @@ const  DoStorage = {//seter geter
 
 const DoCollectChatList = () => {
         console.log("DoCollectChatList...");
-        let label, rid;
-        let chatwork = {
-                        chatlist: [
-                                {
-                                        label: label,
-                                        rid: rid
-                                }
-                        ]
-        };
+        let chat = {};
+        let chatlist = [];
         const chatareaElement = document.getElementById("_roomListArea");
         const listitemElements = chatareaElement.getElementsByTagName("li");
         for (let i = 0; i < listitemElements.length; i++) {
-                chatwork.chatlist.push(listitemElements[i].getAttribute("aria-label")
-                        , listitemElements[i].getAttribute("data-rid"));
+                chat = {};
+                console.log("aria-label" + listitemElements[i].getAttribute("aria-label"))
+                chat["label"] = listitemElements[i].getAttribute("aria-label");
+                chat["rid"] = listitemElements[i].getAttribute("data-rid");
+                chatlist.push(chat);
         }
-        DoStorage.set(chatwork);
+        console.log(chat);
+        DoStorage.set(chatlist);
         DoStorage.get();
 }
 
