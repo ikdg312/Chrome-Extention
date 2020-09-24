@@ -6,53 +6,51 @@ let setMinutes = 10;    //分
 let alarmText = "かきくけこ";
 let tagetchat = "0000";
 
-const  DoStorage = {//seter geter
+const DoGetStorage = {//seter geter
         get: function () {
-                console.log("DoStorageGet...");
-                chrome.storage.local.get(['chatwork'], function (value) {
-                        if (typeof value.chatwork === 'undefined') {
-        
-                        } else {
-                                console.log(value.chatwork);       
-                        }           
+                return new Promise(resolve => {
+                        console.log("DoStorageGet...");
+                        chrome.storage.local.get(['chatlist'], function (value) {
+                                if (typeof value.chatlist === 'undefined') {
+
+                                } else {
+                                        console.log(value.chatlist);
+                                }
+                        });
                 });
         }
         ,
-        set: function (chatlist) {
-                console.log("DoStorageSet...");
-                        chrome.storage.local.get('chatwork', function (value) {
-                        console.log("value " +value.chatwork);
-                        if (typeof value.chatwork === 'undefined') {
-                                console.log("undefinedでした");
-                                value.chatwork = [chatlist];
-                        } else {
-                                value.chatwork.push(chatlist);
-                                chrome.storage.local.clear();
-                                //chrome.StorageArea.remove('chatwork');//promiseを使用し、一通り処理出来たら消すようにしたい
-                        }//多分毎回全データが追加され、同じものがいっぱいある状態に。
-                        //同じものがあるかのヴァリデーションチェックが必要。
-                        chrome.storage.local.set({ 'chatwork': value.chatwork }, function () { });
-                        console.log("Saving...");
+        set: function (chatlistobj) {
+                return new Promise(resolve => {
+                        console.log("DoStorageSet...");
+                        chrome.storage.local.get('chatlist', function (value) {
+                                if (typeof value.chatlist === 'undefined') {
+                                        console.log("undefinedでした");
+                                        value.chatlist = chatlistobj;
+                                } else {
+                                        value.chatlist.chatlist = [];
+                                        value.chatlist = chatlistobj;
+                                }//多分毎回全データが追加され、同じものがいっぱいある状態に。
+                                //同じものがあるかのヴァリデーションチェックが必要。
+                                chrome.storage.local.set({ 'chatlist': value.chatlist });
+                                console.log("Saving...");
+                        });
                 });
         }
 }
 
 const DoCollectChatList = () => {
         console.log("DoCollectChatList...");
-        let chat = {};
-        let chatlist = [];
+        let chatlistobj = { 'chatlist': [] };
         const chatareaElement = document.getElementById("_roomListArea");
         const listitemElements = chatareaElement.getElementsByTagName("li");
         for (let i = 0; i < listitemElements.length; i++) {
-                chat = {};
-                console.log("aria-label" + listitemElements[i].getAttribute("aria-label"))
-                chat["label"] = listitemElements[i].getAttribute("aria-label");
-                chat["rid"] = listitemElements[i].getAttribute("data-rid");
-                chatlist.push(chat);
+                console.log("aria-label" + listitemElements[i].getAttribute("aria-label"));
+                chatlistobj['chatlist'].push({ 'label': listitemElements[i].getAttribute("aria-label"), 'rid': listitemElements[i].getAttribute("data-rid") });
         }
-        console.log(chat);
-        DoStorage.set(chatlist);
-        DoStorage.get();
+        console.log(chatlistobj['chatlist']);
+        DoGetStorage.set(chatlistobj);
+        DoGetStorage.get();
 }
 
 const DoSelectChat = (tagetchat) => {
@@ -144,5 +142,6 @@ const SetTimer = (setHour, setMinutes, alarmText) => {
 }
 
 window.onload = () => {
-        SetTimer(setHour, setMinutes, alarmText);
+        //SetTimer(setHour, setMinutes, alarmText);
+        setTimeout(DoCollectChatList, 5000);
 }
