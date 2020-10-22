@@ -141,7 +141,32 @@ const SetTimer = (setHour, setMinutes, alarmText) => {
         }
 }
 
+// var addDom = () => {
+//         var btn = document.createElement('button');
+//         btn.textContent = '設定';
+//         btn.setAttribute('type', 'button');
+//         btn.classList.add('btn');
+//         btn.classList.add('btn-primary');
+//         btn.setAttribute('data-toggle', 'modal');
+//         btn.setAttribute('data-target', '.bd-example-modal-sm');
+
+//         const listitemElements = document.getElementsByClassName("chatRoomHeader__titleContainer");
+//         console.log(listitemElements);
+//                         console.log("ありました")
+//                         listitemElements[0].appendChild(btn);
+
+// }
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+        let selection;
+        console.log(request.message); //リクエストの内容が表示される
+      
+        // 画面で選択されている部分を文字列で取得する
+        DoCollectChatList();
+        sendResponse(1);
+      });
+
 window.onload = () => {
         //SetTimer(setHour, setMinutes, alarmText);
-        setTimeout(DoCollectChatList, 5000);
+        //setTimeout(addDom, 5000);
 }

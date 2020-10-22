@@ -6,7 +6,7 @@ const DoGetStorage = {//seter geter
                           if (typeof value === 'undefined') {
 
                           } else {
-                            //console.log(value.chatlist);
+                            console.log(value.chatlist);
                             resolve(value);
                           }
                   });
@@ -32,17 +32,34 @@ const DoGetStorage = {//seter geter
   }
 }
 
-var readChatlist = async () => {
-  let list = await DoGetStorage.get();
-  list = list['chatlist'].chatlist;
-  let opt = document.createElement("option");
-  let tmp = document.getElementById("exampleFormControlSelect1");
-  console.log(list);
-  console.log(list.length);
-    for(var i=0;i<list.length;i++){
-            opt = document.createElement("option");
-            opt.value = list[i].rid;  //rid
-            opt.text = list[i].label;   //ラベル
-            tmp.appendChild(opt);
-    }
+var readChatlist = (list) => {
+        list = list['chatlist'].chatlist;
+        let opt = document.createElement("option");
+        let tmp = document.getElementById("exampleFormControlSelect1");
+        // while (tmp.firstChild) {
+        //         tmp.removeChild(tmp.firstChild);
+        //        };
+        console.log(list);
+        console.log(list.length);
+        for (var i = 0; i < list.length; i++) {
+                opt = document.createElement("option");
+                opt.value = list[i].rid;  //rid
+                opt.text = list[i].label;   //ラベル
+                tmp.appendChild(opt);
+        }
 }
+
+$('#exampleFormControlSelect1').click(function(){
+        chrome.tabs.query( {active:true, currentWindow:true}, function(tabs){
+                chrome.tabs.sendMessage(tabs[0].id, {message: 'resetRID'}, function(code){
+                  if(code = 0){
+                    alert('取得できませんでした');
+                    return;
+                  }
+                 readChatlist(await DoGetStorage.get());
+                });
+              });
+})
+window.onload = () => {
+
+};

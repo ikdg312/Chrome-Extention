@@ -1,5 +1,3 @@
-chrome.alarms.create({delayInMinutes: 10000});
-
-chrome.browserAction.onClicked.addListener(function () {
-  readChatlist();
+chrome.browserAction.onClicked.addListener( () => {
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Small modal</button>
 });
